@@ -33,5 +33,9 @@ urlpatterns = [
     path("order/items/all/",views.OrderItemListView.as_view(),name="order-items"),
     path("order/items/<int:pk>/remove/",views.OrderItemRemoveView.as_view(),name="orderitem-remove"),
     path("order/items/<int:pk>/qty/change/",views.CartItemUpdateQuantityView.as_view(),name="editcart-qty"),
+    path("checkout/",views.CheckoutView.as_view(),name="checkout"),
+    path("signout/",views.SignOutView.as_view(),name="signout"),
+    path("bought/summary/",views.BoughtSummaryView.as_view(),name="bought-summary"),
+    path('bought/item/<int:pk>/remove/',views.BoughtItemRemoveView.as_view(),name="bought-item-remove")
     
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -4,6 +4,8 @@ from django.db.models.signals import post_save
 
 class Category(models.Model):
     name=models.CharField(max_length=150,unique=True)
+    phone=models.CharField(max_length=12,null=True)
+    restaurant=models.CharField(max_length=100,null=True)
     created_date=models.DateTimeField(auto_now_add=True)
     updated_data=models.DateTimeField(auto_now=True)
     is_active=models.BooleanField(default=True)
@@ -94,6 +96,49 @@ post_save.connect(create_basket,sender=User)
 
 
 
+
+class Bought(models.Model):
+
+    user_object=models.ForeignKey(User,on_delete=models.CASCADE,related_name="purchase")
+    delivery_address=models.CharField(max_length=200)
+    phone=models.CharField(max_length=12)
+    email=models.CharField(max_length=200,null=True)
+    is_paid=models.BooleanField(default=False)
+    total=models.PositiveIntegerField()
+    Bought_id=models.CharField(max_length=200,null=True)
+    options=(
+        ("cod","cod"),
+        ("online","online")
+    )
+
+    payment=models.CharField(max_length=200,choices=options,default="cod")
+    option=(
+        ("order-placed","order-placed"),
+        ("intransit","intransit"),
+        ("dispatched","dispatched"),
+        ("delivered","delivered"),
+        ("cancelled","cancelled")
+    )
+    status=models.CharField(max_length=200,choices=option,default="order-placed")  
+
+
+
+    @property
+    def get_bought_items(self):
+        return self.purchaseitems.all()
+    @property
+    def get_bought_total(self):
+        purchase_items=self.get_bought_items
+        bought_total=0
+        if purchase_items:
+            bought_total=sum([pi.order_item_object.item_total for pi in purchase_items])
+            return bought_total
+
+
+class BoughtItems(models.Model):
+    bought_object=models.ForeignKey(Bought,on_delete=models.CASCADE,related_name="purchaseitems")
+    order_item_object=models.ForeignKey(OrderItem,on_delete=models.CASCADE)
+   
 
 
 
